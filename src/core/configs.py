@@ -25,4 +25,5 @@ class Settings(BaseSettings):
     class ConfigDict:
         env_file = '.env'
 
+
 settings = Settings()
