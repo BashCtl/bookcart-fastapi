@@ -6,7 +6,7 @@ from sqlalchemy import MetaData
 
 from alembic import context
 
-from src.models import user_model
+from src.models import user_model, token_table, book_model, category_model, author_model
 from src.core.configs import settings
 
 # this is the Alembic Config object, which provides
@@ -37,7 +37,8 @@ def combine_metadata(*args):
     return mdata
 
 
-target_metadata = combine_metadata(user_model.Base.metadata)
+target_metadata = combine_metadata(user_model.Base.metadata, token_table.Base.metadata,
+                                   book_model.Base.metadata, category_model.Base.metadata, author_model.Base.metadata)
 
 
 # other values from the config, defined by the needs of env.py,

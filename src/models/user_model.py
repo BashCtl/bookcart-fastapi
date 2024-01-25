@@ -1,11 +1,12 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime
+
 from . import Base
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True, nullable=False)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
@@ -14,4 +15,4 @@ class User(Base):
     password = Column(String(100), nullable=False)
 
     def __repr__(self):
-        return f'User(first_name{self.first_name}, last_name={self.last_name})'
+        return f"User(first_name{self.first_name}, last_name={self.last_name})"
