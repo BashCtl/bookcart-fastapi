@@ -1,11 +1,12 @@
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
 from src.core.database import get_db
 from src.core.configs import settings
+from src.utils.hashing import verify_password
 from src.models.user_model import User
 from src.models.token_table import TokenTable
 from src.schemas.token_schema import TokenData
@@ -16,15 +17,15 @@ class AuthService:
     ALGORITHM = settings.ALGORITHM
     ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
     REFRESH_TOKEN_EXPIRE_MINUTES = eval(settings.REFRESH_TOKEN_EXPIRE_MINUTES)
-    JWT_REFRESH_SECRET = settings
+    JWT_REFRESH_SECRET = settings.JWT_REFRESH_SECRET
 
-    oauth2_schema = OAuth2PasswordBearer(tokenUrl='/users/login')
+    oauth2_schema = OAuth2PasswordBearer(tokenUrl='/login')
 
     @classmethod
     def create_access_token(cls, data: dict):
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(minutes=AuthService.ACCESS_TOKEN_EXPIRE_MINUTES)
-        to_encode.update({'expire': expire})
+        to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, AuthService.SECRET_KEY, algorithm=AuthService.ALGORITHM)
 
         return encoded_jwt
@@ -36,10 +37,10 @@ class AuthService:
             expire_delta = datetime.utcnow() + timedelta(minutes=expire_delta)
         else:
             expire_delta = datetime.utcnow() + timedelta(minutes=AuthService.REFRESH_TOKEN_EXPIRE_MINUTES)
-        to_encode.update({"expire": expire_delta})
-        encode_jwt = jwt.encode(to_encode, AuthService.JWT_REFRESH_SECRET, algorithm=AuthService.ALGORITHM)
+        to_encode.update({"exp": expire_delta})
+        encoded_jwt = jwt.encode(to_encode, AuthService.JWT_REFRESH_SECRET, algorithm=AuthService.ALGORITHM)
 
-        return encode_jwt
+        return encoded_jwt
 
     @classmethod
     def verify_access_token(cls, token: str, credential_exception):
@@ -68,3 +69,20 @@ class AuthService:
             return user
         else:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token blocked')
+
+    @classmethod
+    def login(cls, request: OAuth2PasswordRequestForm, db: Session):
+        user = db.query(User).filter(User.username == request.username).first()
+        if user is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials.")
+        if not verify_password(request.password, user.password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials.")
+        access_token = AuthService.create_access_token({"id": user.id})
+        refresh_token = AuthService.create_refresh_token({"id": user.id})
+
+        token_db = TokenTable(user_id=user.id, access_token=access_token, refresh_token=refresh_token, status=True)
+        db.add(token_db)
+        db.commit()
+        db.refresh(token_db)
+
+        return {"token_type": "bearer", "access_token": access_token, "refresh_token": refresh_token}
