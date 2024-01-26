@@ -14,3 +14,9 @@ authors_router = APIRouter()
 def add_author(body: NewAuthor, db: Session = Depends(get_db),
                current_account: User = Depends(AuthService.get_current_user)):
     return AuthorService.add_author(body, db)
+
+
+@authors_router.put("/", response_model=AuthorRes, status_code=status.HTTP_201_CREATED)
+def update_author(id: int, body: NewAuthor, db: Session = Depends(get_db),
+                  current_account: User = Depends(AuthService.get_current_user)):
+    return AuthorService.update_author(id, body, db)
