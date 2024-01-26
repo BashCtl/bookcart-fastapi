@@ -25,3 +25,9 @@ class AuthorService:
         db.commit()
 
         return author_query.first()
+
+    @classmethod
+    def get_all_author(cls, db: Session):
+        all_authors = db.query(Author).all()
+
+        return all_authors
