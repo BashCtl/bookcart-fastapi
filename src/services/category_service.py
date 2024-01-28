@@ -20,3 +20,11 @@ class CategoryService:
         db.refresh(new_category)
 
         return new_category
+
+    @classmethod
+    def get_single_category(cls, id: int, db: Session):
+        category = db.query(Category).filter(Category.id == id)
+        if not category.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found.")
+
+        return category.first()

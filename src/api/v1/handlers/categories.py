@@ -13,3 +13,8 @@ categories_router = APIRouter()
 @categories_router.post("/", response_model=CategoryRes, status_code=status.HTTP_201_CREATED)
 def add_category(body: NewCategory, db: Session = Depends(get_db), admin: User = Depends(AuthService.get_admin_user)):
     return CategoryService.add_category(body, db)
+
+
+@categories_router.get("/{id}", response_model=CategoryRes, status_code=status.HTTP_200_OK)
+def get_category_by_id(id: int, db: Session = Depends(get_db)):
+    return CategoryService.get_single_category(id, db)
