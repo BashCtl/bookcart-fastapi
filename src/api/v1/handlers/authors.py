@@ -28,6 +28,11 @@ def get_all_authors(db: Session = Depends(get_db)):
     return AuthorService.get_all_author(db)
 
 
+@authors_router.get("/{id}", response_model=AuthorRes, status_code=status.HTTP_200_OK)
+def get_single_author(id: int, db: Session = Depends(get_db)):
+    return AuthorService.get_author_by_id(id, db)
+
+
 @authors_router.delete("/{id}", status_code=status.HTTP_205_RESET_CONTENT)
 def delete_author(id: int, db: Session = Depends(get_db), admin: User = Depends(AuthService.get_admin_user)):
     return AuthorService.delete_author(id, db)

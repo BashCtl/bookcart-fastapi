@@ -1,15 +1,16 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
-from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
-from src.core.database import get_db
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import jwt, JWTError
+from sqlalchemy.orm import Session
+
 from src.core.configs import settings
-from src.utils.hashing import verify_password
-from src.models.user_model import User
+from src.core.database import get_db
 from src.models.token_table import TokenTable
+from src.models.user_model import User
 from src.schemas.token_schema import TokenData
+from src.utils.hashing import verify_password
 
 
 class AuthService:
