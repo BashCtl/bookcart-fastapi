@@ -24,3 +24,9 @@ def get_category_by_id(id: int, db: Session = Depends(get_db)):
 @categories_router.get("/", response_model=List[CategoryRes], status_code=status.HTTP_200_OK)
 def get_all_categories(db: Session = Depends(get_db)):
     return CategoryService.get_all_categories(db)
+
+
+@categories_router.put("/{id}", response_model=CategoryRes, status_code=status.HTTP_201_CREATED)
+def update_category(id: int, body: NewCategory, db: Session = Depends(get_db),
+                    admin: User = Depends(AuthService.get_admin_user)):
+    return CategoryService.update_category(id, body, db)
