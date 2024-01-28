@@ -1,8 +1,9 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from src.schemas.author_schema import NewAuthor
 from src.models.author_model import Author
+from src.models.user_model import User
 
 
 class AuthorService:
@@ -25,6 +26,15 @@ class AuthorService:
         db.commit()
 
         return author_query.first()
+
+    @classmethod
+    def delete_author(cls, id: int, db: Session):
+        author_query = db.query(Author).filter(Author.id == id)
+        if not author_query.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Author with id {id} not found.")
+        author_query.delete(synchronize_session=False)
+        db.commit()
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     @classmethod
     def get_all_author(cls, db: Session):

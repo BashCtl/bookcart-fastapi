@@ -13,16 +13,21 @@ authors_router = APIRouter()
 
 @authors_router.post("/", response_model=AuthorRes, status_code=status.HTTP_201_CREATED)
 def add_author(body: NewAuthor, db: Session = Depends(get_db),
-               current_account: User = Depends(AuthService.get_current_user)):
+               current_account: User = Depends(AuthService.get_admin_user)):
     return AuthorService.add_author(body, db)
 
 
-@authors_router.put("/", response_model=AuthorRes, status_code=status.HTTP_201_CREATED)
+@authors_router.put("/{id}", response_model=AuthorRes, status_code=status.HTTP_201_CREATED)
 def update_author(id: int, body: NewAuthor, db: Session = Depends(get_db),
-                  current_account: User = Depends(AuthService.get_current_user)):
+                  current_account: User = Depends(AuthService.get_admin_user)):
     return AuthorService.update_author(id, body, db)
 
 
 @authors_router.get("/", response_model=List[AuthorRes], status_code=status.HTTP_200_OK)
 def get_all_authors(db: Session = Depends(get_db)):
     return AuthorService.get_all_author(db)
+
+
+@authors_router.delete("/{id}", status_code=status.HTTP_205_RESET_CONTENT)
+def delete_author(id: int, db: Session = Depends(get_db), admin: User = Depends(AuthService.get_admin_user)):
+    return AuthorService.delete_author(id, db)

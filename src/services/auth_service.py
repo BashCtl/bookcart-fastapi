@@ -68,7 +68,15 @@ class AuthService:
         if token_from_db.status:
             return user
         else:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token blocked')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token blocked")
+
+    @classmethod
+    def get_admin_user(cls, token: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
+        user = AuthService.get_current_user(token, db)
+        if user.is_admin:
+            return user
+        else:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access Forbidden.")
 
     @classmethod
     def login(cls, request: OAuth2PasswordRequestForm, db: Session):
