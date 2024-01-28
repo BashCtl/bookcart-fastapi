@@ -28,3 +28,9 @@ class CategoryService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found.")
 
         return category.first()
+
+    @classmethod
+    def get_all_categories(cls, db: Session):
+        all_categories = db.query(Category).all()
+
+        return all_categories
