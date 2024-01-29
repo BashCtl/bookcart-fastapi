@@ -22,4 +22,5 @@ class UserResp(BaseModel):
     username: str
     first_name: str
     last_name: str
+    is_admin: bool
     created_at: datetime

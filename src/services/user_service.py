@@ -1,8 +1,8 @@
-from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
 
-from src.schemas.user_schema import NewUser, UpdateUser
 from src.models.user_model import User
+from src.schemas.user_schema import NewUser, UpdateUser
 from src.utils.hashing import hashing_password
 
 
@@ -36,3 +36,9 @@ class UserService:
         db.commit()
 
         return user_query.first()
+
+    @classmethod
+    def get_all_users(cls, db: Session):
+        all_users = db.query(User).all()
+
+        return all_users
