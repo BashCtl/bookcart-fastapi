@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from src.models.category_model import Category
@@ -46,3 +46,13 @@ class CategoryService:
         db.commit()
 
         return category_query.first()
+
+    @classmethod
+    def delete_category(cls, id: int, db: Session):
+        category_query = db.query(Category).filter(Category.id == id)
+        if not category_query.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found.")
+        category_query.delete(synchronize_session=False)
+        db.commit()
+
+        return Response(status_code=status.HTTP_204_NO_CONTENT)

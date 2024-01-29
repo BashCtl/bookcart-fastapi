@@ -7,4 +7,5 @@ class NewCategory(BaseModel):
 
 
 class CategoryRes(NewCategory):
+    id:int
     created_at: datetime

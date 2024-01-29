@@ -30,3 +30,8 @@ def get_all_categories(db: Session = Depends(get_db)):
 def update_category(id: int, body: NewCategory, db: Session = Depends(get_db),
                     admin: User = Depends(AuthService.get_admin_user)):
     return CategoryService.update_category(id, body, db)
+
+
+@categories_router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(id: int, db: Session = Depends(get_db), admin: User = Depends(AuthService.get_admin_user)):
+    return CategoryService.delete_category(id, db)
