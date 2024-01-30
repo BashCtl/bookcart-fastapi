@@ -25,3 +25,8 @@ def update_user(id: int, body: UpdateUser, db: Session = Depends(get_db),
 @users_router.get("/", response_model=List[UserResp], status_code=status.HTTP_200_OK)
 def get_all_users(db: Session = Depends(get_db)):
     return UserService.get_all_users(db)
+
+
+@users_router.get("/{id}", response_model=UserResp, status_code=status.HTTP_200_OK)
+def get_single_user(id: int, db: Session = Depends(get_db)):
+    return UserService.get_single_user(id, db)
