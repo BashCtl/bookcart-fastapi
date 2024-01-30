@@ -30,3 +30,8 @@ def get_all_users(db: Session = Depends(get_db)):
 @users_router.get("/{id}", response_model=UserResp, status_code=status.HTTP_200_OK)
 def get_single_user(id: int, db: Session = Depends(get_db)):
     return UserService.get_single_user(id, db)
+
+
+@users_router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(id: int, db: Session = Depends(get_db), current_user: User = Depends(AuthService.get_current_user)):
+    return UserService.delete_user(id, db, current_user)

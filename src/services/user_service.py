@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from src.models.user_model import User
@@ -44,9 +44,24 @@ class UserService:
         return all_users
 
     @classmethod
-    def get_single_user(cls, id: int, db : Session):
-        user = db.query(User).filter(User.id==id).first()
+    def get_single_user(cls, id: int, db: Session):
+        user = db.query(User).filter(User.id == id).first()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
 
         return user
+
+    @classmethod
+    def delete_user(cls, id: int, db: Session, current_user: User):
+        user_query = db.query(User).filter(User.id == id)
+        if not user_query.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+
+        if current_user.id == id or current_user.is_admin:
+            user_query.delete(synchronize_session=False)
+            db.commit()
+        else:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail="Not authorized to perform requested action.")
+
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
