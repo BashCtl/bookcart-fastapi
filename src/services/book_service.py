@@ -21,3 +21,9 @@ class BookService:
         db.refresh(new_book)
 
         return new_book
+
+    @classmethod
+    def get_all_books(cls, db: Session):
+        all_books = db.query(Book).all()
+
+        return all_books
