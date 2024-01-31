@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
+from typing import Optional
 from src.schemas.author_schema import AuthorRes
 from src.schemas.category_schema import CategoryRes
 
@@ -15,3 +15,9 @@ class BookRes(BaseModel):
     title: str
     author: AuthorRes
     category: CategoryRes
+
+
+class UpdateBook(BaseModel):
+    title: Optional[str] = None
+    author_id: Optional[int] = None
+    category_id: Optional[int] = None

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 from src.models.book_model import Book
-from src.schemas.book_schema import NewBook
+from src.schemas.book_schema import NewBook, UpdateBook
 
 
 class BookService:
@@ -35,3 +35,14 @@ class BookService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
 
         return book
+
+    @classmethod
+    def update_book(cls, id: int, body: UpdateBook, db: Session):
+        book_query = db.query(Book).filter(Book.id == id)
+        if not book_query.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+
+        book_query.update(body.model_dump(exclude_unset=True), synchronize_session=False)
+        db.commit()
+
+        return book_query.first()
