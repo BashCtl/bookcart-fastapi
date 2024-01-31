@@ -30,3 +30,8 @@ def get_single_book(id: int, db: Session = Depends(get_db)):
 def update_book(id: int, body: UpdateBook, db: Session = Depends(get_db),
                 admin: User = Depends(AuthService.get_admin_user)):
     return BookService.update_book(id, body, db)
+
+
+@books_router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_book(id: int, db: Session = Depends(get_db), admin: User = Depends(AuthService.get_admin_user)):
+    return BookService.delete_book(id, db)

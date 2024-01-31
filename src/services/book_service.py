@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
@@ -46,3 +46,14 @@ class BookService:
         db.commit()
 
         return book_query.first()
+
+    @classmethod
+    def delete_book(cls, id: int, db: Session):
+        book_query = db.query(Book).filter(Book.id == id)
+        if not book_query.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+
+        book_query.delete(synchronize_session=False)
+        db.commit()
+
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
