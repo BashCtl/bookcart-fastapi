@@ -19,3 +19,8 @@ def add_new_book(body: NewBook, db: Session = Depends(get_db), admin: User = Dep
 @books_router.get("/", response_model=List[BookRes], status_code=status.HTTP_200_OK)
 def get_all_books(db: Session = Depends(get_db)):
     return BookService.get_all_books(db)
+
+
+@books_router.get("/{id}", response_model=BookRes, status_code=status.HTTP_200_OK)
+def get_single_book(id: int, db: Session = Depends(get_db)):
+    return BookService.get_single_book(id, db)

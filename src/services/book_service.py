@@ -27,3 +27,11 @@ class BookService:
         all_books = db.query(Book).all()
 
         return all_books
+
+    @classmethod
+    def get_single_book(cls, id: int, db: Session):
+        book = db.query(Book).filter(Book.id == id).first()
+        if not book:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+
+        return book
