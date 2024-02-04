@@ -10,5 +10,4 @@ class CartItem(Base):
     cart_id = Column(Integer, ForeignKey("carts.id", ondelete="CASCADE"), nullable=False)
     book_id = Column(Integer, ForeignKey("books.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, default=1)
-    cart = relationship("Cart")
     book = relationship("Book")
