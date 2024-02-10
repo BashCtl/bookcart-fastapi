@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
@@ -30,5 +30,23 @@ class CartService:
             cart_item.quantity = body.quantity
             db.commit()
         db.refresh(cart_item)
-        print(cart.cart_items)
+
         return cart
+
+    @classmethod
+    def delete_cart_item(cls, book_id: int, user: User, db: Session):
+        cart = db.query(Cart).filter(and_(Cart.user_id == user.id,
+                                          Cart.completed == False)).first()
+        if not cart:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found.")
+
+        cart_item = db.query(CartItem).filter(and_(CartItem.cart_id == cart.id,
+                                                   CartItem.book_id == book_id))
+
+        if not cart_item.first():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+
+        cart_item.delete(synchronize_session=False)
+        db.commit()
+
+        return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -11,3 +11,6 @@ class CartItem(Base):
     book_id = Column(Integer, ForeignKey("books.id", ondelete="CASCADE"), nullable=False)
     quantity = Column(Integer, default=1)
     book = relationship("Book")
+
+    def __repr__(self):
+        return f"CartItem(cart_id={self.cart_id}, book_id={self.book_id})"

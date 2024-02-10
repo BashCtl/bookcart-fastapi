@@ -11,6 +11,12 @@ carts_router = APIRouter()
 
 
 @carts_router.post("/", status_code=status.HTTP_201_CREATED)
-def add_book_to_cart(body: CartItemSchema, user: User = Depends(AuthService.get_current_user),
+def add_book_to_cart(body: CartItemSchema, current_user: User = Depends(AuthService.get_current_user),
                      db: Session = Depends(get_db)):
-    return CartService.add_item(body, user, db)
+    return CartService.add_item(body, current_user, db)
+
+
+@carts_router.delete("/item/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_single_cart_item(id: int, current_user: User = Depends(AuthService.get_current_user),
+                            db: Session = Depends(get_db)):
+    return CartService.delete_cart_item(id, current_user, db)
