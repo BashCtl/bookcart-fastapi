@@ -21,3 +21,9 @@ def add_book_to_cart(body: CartItemSchema, current_user: User = Depends(AuthServ
 def delete_single_cart_item(id: int, current_user: User = Depends(AuthService.get_current_user),
                             db: Session = Depends(get_db)):
     return CartService.delete_cart_item(id, current_user, db)
+
+
+@carts_router.get("/", response_model=CartOut, status_code=status.HTTP_200_OK)
+def get_current_cart(current_user: User = Depends(AuthService.get_current_user),
+                     db: Session = Depends(get_db)):
+    return CartService.get_current_cart(current_user, db)

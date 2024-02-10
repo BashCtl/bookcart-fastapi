@@ -50,3 +50,12 @@ class CartService:
         db.commit()
 
         return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    @classmethod
+    def get_current_cart(cls, user: User, db: Session):
+        cart = db.query(Cart).filter(and_(Cart.user_id == user.id,
+                                          Cart.completed == False)).first()
+        if not cart:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found.")
+
+        return cart
