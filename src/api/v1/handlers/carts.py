@@ -27,3 +27,9 @@ def delete_single_cart_item(id: int, current_user: User = Depends(AuthService.ge
 def get_current_cart(current_user: User = Depends(AuthService.get_current_user),
                      db: Session = Depends(get_db)):
     return CartService.get_current_cart(current_user, db)
+
+
+@carts_router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+def delete_current_cart(current_user: User = Depends(AuthService.get_current_user),
+                       db: Session = Depends(get_db)):
+    return CartService.delete_current_cart(current_user, db)
